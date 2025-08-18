@@ -120,12 +120,21 @@ class SmsService {
 
     final parser = SmsParser();
     int processedCount = 0;
+    int skippedCount = 0;
 
     for (var sms in smsList) {
       try {
         // Safe type conversion
         final String body = _safeGetString(sms, 'body');
+        final String smsId = _safeGetString(sms, 'id');
         final dynamic dateValue = sms['date'];
+
+        // Check if this SMS is already processed (prevent duplicates)
+        bool alreadyExists = _databaseService.smsAlreadyProcessed(smsId);
+        if (alreadyExists) {
+          skippedCount++;
+          continue;
+        }
 
         int timestamp;
         if (dateValue is int) {
@@ -139,7 +148,7 @@ class SmsService {
         }
 
         if (body.isNotEmpty && parser.isFinancialSms(body)) {
-          final transaction = parser.parseTransaction(body, userId, timestamp);
+          final transaction = parser.parseTransaction(body, userId, timestamp, smsId);
           if (transaction != null) {
             await _databaseService.saveTransaction(transaction);
             processedCount++;
@@ -152,7 +161,8 @@ class SmsService {
       }
     }
 
-    print('Successfully processed $processedCount financial SMS messages');
+    print('Successfully processed $processedCount new financial SMS messages');
+    print('Skipped $skippedCount already processed messages');
   }
 
   String _safeGetString(Map<String, dynamic> map, String key) {

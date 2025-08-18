@@ -19,7 +19,7 @@ class SmsParser {
     return _financialKeywords.any((keyword) => lowerBody.contains(keyword));
   }
 
-  Transaction? parseTransaction(String smsBody, String userId, int timestamp) {
+  Transaction? parseTransaction(String smsBody, String userId, int timestamp, String smsId) {
     final amount = _extractAmount(smsBody);
     final currency = _extractCurrency(smsBody);
     final type = _determineTransactionType(smsBody);
@@ -35,6 +35,7 @@ class SmsParser {
       description: _extractDescription(smsBody),
       timestamp: DateTime.fromMillisecondsSinceEpoch(timestamp),
       rawSms: smsBody,
+      smsId: smsId,
     );
   }
 

@@ -36,10 +36,10 @@ class MainActivity: FlutterActivity() {
                 }
                 "getAllSms" -> {
                     if (hasSmsPermission()) {
-                        try {
-                            val smsList = getAllSms()
-                            result.success(smsList)
-                        } catch (e: Exception) {
+                            try {
+                                val smsList = getAllSms()
+                                result.success(smsList)
+                            } catch (e: Exception) {
                             result.error("SMS_READ_ERROR", "Failed to read SMS: ${e.message}", null)
                         }
                     } else {

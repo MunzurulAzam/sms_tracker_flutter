@@ -207,6 +207,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
+            SizedBox(height: 16),
+
+            // Clear All Transactions Button
+            ElevatedButton.icon(
+              onPressed: () async {
+                await _databaseService.clearAllTransactions();
+                _loadTransactions();
+                setState(() {
+                  _currentUserId = '';
+                  _predictionResult = null;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('All transactions cleared!')),
+                );
+              },
+              icon: Icon(Icons.clear_all),
+              label: Text('Clear All Transactions'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(16),
+                backgroundColor: Colors.red,
+              ),
+            ),
+
             SizedBox(height: 24),
 
             // Loan Prediction Section
@@ -283,9 +306,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(transaction.description),
                           Text(transaction.timestamp.toString().substring(0, 19)),
+                          Text('User: ${transaction.userId.substring(0, 8)}...', style: TextStyle(fontSize: 12, color: Colors.grey)),
                         ],
                       ),
-                      trailing: Text(transaction.type.toUpperCase()),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(transaction.type.toUpperCase()),
+                          Text('SMS: ${transaction.smsId}', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        ],
+                      ),
                     ),
                   );
                 },

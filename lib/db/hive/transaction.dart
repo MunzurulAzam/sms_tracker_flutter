@@ -28,6 +28,9 @@ class Transaction extends HiveObject {
   @HiveField(7)
   String rawSms;
 
+  @HiveField(8)
+  String smsId; // Add SMS ID to prevent duplicates
+
   Transaction({
     required this.id,
     required this.userId,
@@ -37,6 +40,7 @@ class Transaction extends HiveObject {
     required this.description,
     required this.timestamp,
     required this.rawSms,
+    required this.smsId,
   });
 
   Map<String, dynamic> toMap() {
@@ -49,6 +53,7 @@ class Transaction extends HiveObject {
       'description': description,
       'timestamp': timestamp.toIso8601String(),
       'rawSms': rawSms,
+      'smsId': smsId,
     };
   }
 }

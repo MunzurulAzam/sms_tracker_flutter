@@ -14,14 +14,18 @@ class DatabaseService {
     await _transactionBox.put(transaction.id, transaction);
   }
 
+  bool smsAlreadyProcessed(String smsId) {
+    return _transactionBox.values.any((transaction) => transaction.smsId == smsId);
+  }
+
   List<Transaction> getAllTransactions() {
-    return _transactionBox.values.toList();
+    return _transactionBox.values.toList()..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
   List<Transaction> getTransactionsByUserId(String userId) {
     return _transactionBox.values
         .where((transaction) => transaction.userId == userId)
-        .toList();
+        .toList()..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
   double getTotalCredit(String userId) {
@@ -38,5 +42,9 @@ class DatabaseService {
 
   double getNetBalance(String userId) {
     return getTotalCredit(userId) - getTotalDebit(userId);
+  }
+
+  Future<void> clearAllTransactions() async {
+    await _transactionBox.clear();
   }
 }
